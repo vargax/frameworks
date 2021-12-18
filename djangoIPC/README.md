@@ -40,3 +40,11 @@ pip-compile requirements.in
 pip install -r requirements.txt
 ```
 Then add it to *INSTALLED_APPS* on *app/settings.py*.
+
+## Models
+Models are created on the *models.py* file. To make them available on the *admin* interface
+register them on the *admin.py* file. Then make and run *migrations*:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
