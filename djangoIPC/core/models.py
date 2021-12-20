@@ -6,6 +6,9 @@ class Country(models.Model):
     name = models.CharField(max_length=20)
     code = models.CharField(max_length=2)
 
+    def __str__(self):
+        return self.name
+
 
 class Ip(models.Model):
     ip = models.CharField(primary_key=True, max_length=45)
@@ -13,6 +16,9 @@ class Ip(models.Model):
 
     payload = models.JSONField()
     modified = models.DateTimeField()
+
+    def __str__(self):
+        return self.ip
 
     def save(self, *args, **kwargs):
         self.modified = timezone.now()
