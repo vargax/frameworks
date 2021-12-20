@@ -1,4 +1,5 @@
 .idea
 .venv
 
+.django-insecure
 db.sqlite3
