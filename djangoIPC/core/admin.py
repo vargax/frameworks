@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ip, Country
+
+from .models import Ip
 
 admin.site.register(Ip)
-admin.site.register(Country)
