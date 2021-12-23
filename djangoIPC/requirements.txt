@@ -6,15 +6,25 @@
 #
 asgiref==3.4.1
     # via django
+certifi==2021.10.8
+    # via requests
+charset-normalizer==2.0.9
+    # via requests
 django==4.0
     # via djangorestframework
 django-rest-framework==0.1.0
     # via -r requirements.in
 djangorestframework==3.13.1
     # via django-rest-framework
+idna==3.3
+    # via requests
 pytz==2021.3
     # via djangorestframework
+requests==2.26.0
+    # via -r requirements.in
 sqlparse==0.4.2
     # via django
 tzdata==2021.5
     # via django
+urllib3==1.26.7
+    # via requests
