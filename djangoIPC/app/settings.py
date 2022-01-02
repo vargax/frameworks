@@ -16,6 +16,7 @@ from .utils import get_secret
 # Project-specific settings
 IPC = {
     'IP_API_URL': 'http://ip-api.com/json/',
+    'CACHE_EXP': '00 00:01:00',  # DD HH:MM:SS
 }
 
 # Framework and packages settings
