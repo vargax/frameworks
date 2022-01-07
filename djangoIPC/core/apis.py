@@ -1,5 +1,6 @@
 import logging
 
+from django.core.validators import validate_ipv46_address
 from django.http import JsonResponse
 from rest_framework import serializers
 from rest_framework.decorators import api_view
@@ -14,21 +15,27 @@ logger = logging.getLogger(__name__)
 def get_all_ips(r: Request) -> JsonResponse:
     logger.info("All IPs requested...")
     ii = CoreService.get_cached_ips()
-    s = CachedIpsSerializer(ii, many=True)
+    s = IpSerializer(ii, many=True)
     return JsonResponse(s.data, safe=False)
 
 
 @api_view(['GET'])
 def get_ip(r: Request, ip: str) -> JsonResponse:
     logger.info(f"{ip} requested...")
-    p = CoreService.get_ip_payload(ip=ip)
+    s = IpSerializer(data={'ip': ip})
+    s.is_valid(raise_exception=True)
+    p = CoreService.get_ip_payload(ip=s.validated_data['ip'])
     return JsonResponse(data=p)
 
 
-class CachedIpsSerializer(serializers.Serializer):
+class IpSerializer(serializers.Serializer):
     ip = serializers.CharField(max_length=45)
-    modified = serializers.DateTimeField()
-    payload = serializers.JSONField()
+    modified = serializers.DateTimeField(required=False)
+    payload = serializers.JSONField(required=False)
+
+    def validate_ip(self, value):
+        validate_ipv46_address(value)
+        return value
 
     def create(self, validated_data):
         raise NotImplementedError(
