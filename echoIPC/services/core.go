@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/vargax/frameworks/echoIPC"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -21,13 +22,10 @@ func New(dbMdl echoIPC.DbMdl) *CoreSrv {
 	}
 }
 
-func (cs CoreSrv) GetCachedIps(ii *[]echoIPC.Ip) error {
-	return cs.dbm.SelectAllIps(ii)
-}
-
 func (cs CoreSrv) GetIpPayload(i *echoIPC.Ip) error {
 	err := cs.dbm.SelectIp(i)
 	if errors.Is(err, echoIPC.RecordNotFound) {
+		log.Printf("%s wasn't found locally...", i.Ip)
 
 		err := cs.queryIpApi(i)
 		if err != nil {
@@ -42,7 +40,12 @@ func (cs CoreSrv) GetIpPayload(i *echoIPC.Ip) error {
 	return nil
 }
 
+func (cs CoreSrv) GetCachedIps(ii *[]echoIPC.Ip) error {
+	return cs.dbm.SelectAllIps(ii)
+}
+
 func (cs CoreSrv) queryIpApi(i *echoIPC.Ip) error {
+	log.Printf("Querying IP-API for %s", i.Ip)
 	q := fmt.Sprintf("%s%s", cs.ipApiUrl, i.Ip)
 
 	r, err := http.Get(q)
