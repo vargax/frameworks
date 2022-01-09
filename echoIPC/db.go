@@ -6,6 +6,7 @@ type DbMdl interface {
 	InsertIp(i *Ip) error
 	SelectIp(i *Ip) error
 	SelectAllIps(ii *[]Ip) error
+	UpdateIp(i *Ip) error
 }
 
 var (

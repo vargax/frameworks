@@ -8,16 +8,24 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 type CoreSrv struct {
 	ipApiUrl string
+	cacheExp time.Duration
 	dbm      echoIPC.DbMdl
 }
 
 func New(dbMdl echoIPC.DbMdl) *CoreSrv {
+	ce, err := time.ParseDuration(os.Getenv(echoIPC.CacheExp))
+	if err != nil {
+		panic(err)
+	}
+
 	return &CoreSrv{
 		ipApiUrl: os.Getenv(echoIPC.IpApiUrl),
+		cacheExp: ce,
 		dbm:      dbMdl,
 	}
 }
@@ -26,7 +34,6 @@ func (cs CoreSrv) GetIpPayload(i *echoIPC.Ip) error {
 	err := cs.dbm.SelectIp(i)
 	if errors.Is(err, echoIPC.RecordNotFound) {
 		log.Printf("%s wasn't found locally...", i.Ip)
-
 		err := cs.queryIpApi(i)
 		if err != nil {
 			return err
@@ -37,6 +44,21 @@ func (cs CoreSrv) GetIpPayload(i *echoIPC.Ip) error {
 			return err
 		}
 	}
+
+	age := time.Since(i.Modified)
+	if age > cs.cacheExp {
+		log.Printf("%s record is expired! It was cached %v ago...", i.Ip, age)
+		err := cs.queryIpApi(i)
+		if err != nil {
+			return err
+		}
+
+		err = cs.dbm.UpdateIp(i)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

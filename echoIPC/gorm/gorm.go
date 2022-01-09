@@ -43,3 +43,8 @@ func (dbm *DbMdl) SelectAllIps(ii *[]echoIPC.Ip) error {
 	log.Printf("%v IPs found in the cache", len(*ii))
 	return r.Error
 }
+
+func (dbm *DbMdl) UpdateIp(i *echoIPC.Ip) error {
+	r := dbm.db.Save(&i)
+	return r.Error
+}
