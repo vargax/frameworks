@@ -6,7 +6,7 @@ import (
 )
 
 type Ip struct {
-	Ip       string `gorm:"primarykey"`
+	Ip       string `gorm:"primarykey" validate:"ip_addr"`
 	Payload  datatypes.JSON
 	Modified time.Time `gorm:"autoUpdateTime"`
 }

@@ -16,6 +16,10 @@ func (wm *WebMdl) getIp(c echo.Context) error {
 		Ip: c.Param("ip"),
 	}
 
+	if err := c.Validate(i); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	err := wm.ss.CoreSrv.GetIpPayload(&i)
 	if err != nil {
 		return err
