@@ -6,8 +6,6 @@ This sample *Echo* project was designed following the guidelines shared by Ashle
 The entry point is [main.go](cmd/main.go) and config parameters are passed as env variables ([env.go](env.go) and
 [.env](.env)).
 
-[![Scc Count Badge](https://sloc.xyz/github/boyter/scc/)](https://github.com/boyter/scc/)
-
 ## Interfaces
 
 *Go* is a strongly statically typed language and its compiler doesn't like import loops. This means there **can be no**
