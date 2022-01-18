@@ -6,24 +6,38 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @CommonsLog
 class IpService {
     private final IpRepository ipRepository;
-    @Value("${ipapi.url}")
+    private final Duration cacheExp;
+    @Value("${IP_API_URL}")
     private String ipApiUrl;
 
-    IpService(IpRepository ipRepository) {
+    IpService(IpRepository ipRepository, @Value("${CACHE_EXP}") String cacheExp) {
         this.ipRepository = ipRepository;
+        this.cacheExp = Duration.parse(cacheExp);
     }
 
     JsonNode getIpPayload(String ipAddr) {
-        Ip ip = ipRepository.findById(ipAddr).orElseGet(() -> {
+        Ip ip = ipRepository.findById(ipAddr).orElse(null);
+
+        if (ip == null) {
             log.info(String.format("%s wasn't found locally...", ipAddr));
-            return ipRepository.save(new Ip(ipAddr, queryIpApi(ipAddr)));
-        });
+            ip = ipRepository.save(new Ip(ipAddr, queryIpApi(ipAddr)));
+        }
+
+        Duration age = Duration.between(ip.getModified(), LocalDateTime.now());
+        if (age.compareTo(cacheExp) > 0) {
+            log.info(String.format("%s record is expired! It was cached %s ago...", ip.getIp(), age));
+            ip.setPayload(queryIpApi(ipAddr));
+            ipRepository.save(ip);
+        }
+
         return ip.getPayload();
     }
 
