@@ -1,4 +1,4 @@
-# Django IP Cache
+# Python Django IP Cache
 This sample *Django* project is based on the [*Django API Domains*](https://phalt.github.io/django-api-domains/) style
 guide.
 

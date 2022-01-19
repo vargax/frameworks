@@ -1,4 +1,4 @@
-# Echo IP Cache
+# Go Echo IP Cache
 
 This sample *Echo* project was designed following the guidelines shared by Ashley McManara on
 [*Go best practices*](https://www.youtube.com/watch?v=MzTcsI6tn-0).
